@@ -51,7 +51,11 @@ export function lineChart(points, { height = 220, color = TEAL, valueLabel = (v)
     .map((p, i) => `<circle cx="${x(i).toFixed(1)}" cy="${y(p.value).toFixed(1)}" r="4.5" fill="#fff" stroke="${color}" stroke-width="2.5"><title>${esc(p.label)}: ${esc(valueLabel(p.value))}</title></circle>`)
     .join('');
   const labels = points
-    .map((p, i) => `<text x="${x(i).toFixed(1)}" y="${y(p.value) - 10}" text-anchor="middle" font-size="12" font-weight="700" fill="${INK}">${esc(valueLabel(p.value))}</text>`)
+    .map((p, i) => {
+      const anchor = i === 0 ? 'start' : i === points.length - 1 ? 'end' : 'middle';
+      const lx = i === 0 ? x(i) + 6 : i === points.length - 1 ? x(i) - 6 : x(i);
+      return `<text x="${lx.toFixed(1)}" y="${y(p.value) - 10}" text-anchor="${anchor}" font-size="12" font-weight="700" fill="${INK}">${esc(valueLabel(p.value))}</text>`;
+    })
     .join('');
   return `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Grafik garis ${esc(yLabel)}" class="chart">
     ${ticks.map((t) => `<line x1="${padL}" y1="${y(t)}" x2="${w - padR}" y2="${y(t)}" stroke="${GRID}" stroke-width="1"/><text x="${padL - 8}" y="${y(t) + 4}" text-anchor="end" font-size="11" fill="${MUTED}">${fmtCompact(t)}</text>`).join('')}
@@ -144,8 +148,9 @@ export function donutChart(slices, { size = 260, centre = '' } = {}) {
     .join('');
   return `<div class="donut-wrap"><svg viewBox="0 0 ${size} ${size}" role="img" aria-label="Grafik donat" class="donut">
     ${paths}<circle cx="${cx}" cy="${cy}" r="58" fill="#fff"/>
-    <text x="${cx}" y="${cy - 2}" text-anchor="middle" font-size="21" font-weight="800" fill="${INK}">${esc(centre)}</text>
-    <text x="${cx}" y="${cy + 20}" text-anchor="middle" font-size="12" fill="${MUTED}">dari penduduk bekerja</text>
+    <text x="${cx}" y="${cy - 6}" text-anchor="middle" font-size="21" font-weight="800" fill="${INK}">${esc(centre)}</text>
+    <text x="${cx}" y="${cy + 14}" text-anchor="middle" font-size="11.5" fill="${MUTED}">pekerja</text>
+    <text x="${cx}" y="${cy + 29}" text-anchor="middle" font-size="11.5" fill="${MUTED}">informal</text>
   </svg><div class="legend">${legend}</div></div>`;
 }
 
